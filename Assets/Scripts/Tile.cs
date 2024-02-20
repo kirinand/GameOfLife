@@ -8,6 +8,8 @@ public class Tile : MonoBehaviour
 
     [SerializeField] private GameObject _highlight;
     [SerializeField] private GameObject _piece;
+    public int X { get; private set; }
+    public int Y { get; private set; }
 
     private void OnMouseEnter()
     {   
@@ -27,11 +29,23 @@ public class Tile : MonoBehaviour
         if (!_piece.activeSelf)
         {   
 
-            var pieceScript = _piece.GetComponent<Piece>();
             int turn = GameManager.Instance.CurrentTurn;
-            pieceScript.Color = turn == 0 ? Piece.PieceColor.White : Piece.PieceColor.Black;
-            _piece.SetActive(true);
+            ActivatePiece(turn);
             _highlight.SetActive(false);
         }
+    }
+
+    private void ActivatePiece(int color)
+    {
+        var pieceScript = _piece.GetComponent<Piece>();
+        pieceScript.Color = (Piece.PieceColor)color;  
+        _piece.SetActive(true);
+    }
+
+    public void Initialize(int x, int y, int state=-1)
+    {
+        X = x;
+        Y = y;
+        if (state != -1) ActivatePiece(state);
     }
 }
