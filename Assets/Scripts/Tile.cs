@@ -32,6 +32,7 @@ public class Tile : MonoBehaviour
             int turn = GameManager.Instance.CurrentTurn;
             ActivatePiece(turn);
             _highlight.SetActive(false);
+            GridManager.Instance.MakeMove(X, Y, turn);
         }
     }
 
@@ -47,5 +48,12 @@ public class Tile : MonoBehaviour
         X = x;
         Y = y;
         if (state != -1) ActivatePiece(state);
+    }
+
+    public void ChangeState(int state) {
+        if (state == -1)
+            _piece.SetActive(false);
+        else 
+            ActivatePiece(state);
     }
 }
