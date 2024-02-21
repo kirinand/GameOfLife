@@ -5,10 +5,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
+    private static int INITAIL_SCORE = 2;
     private int _currentTurn = 0;
     private int _totalTurns = 0;
-    private int _whiteScore = 2;
-    private int _blackScore = 2;
+    private int _whiteScore = INITAIL_SCORE;
+    private int _blackScore = INITAIL_SCORE;
 
     public static GameManager Instance {
         get { 
@@ -49,5 +50,12 @@ public class GameManager : MonoBehaviour
         _totalTurns++;
         _whiteScore = whiteScore;
         _blackScore = blackScore;
+
+        if (whiteScore == 0) { 
+            
+        } else if (blackScore == 0)
+        {
+            
+        }
     }
 }

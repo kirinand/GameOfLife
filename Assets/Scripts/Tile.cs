@@ -26,7 +26,7 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     { 
-        if (!_piece.activeSelf)
+        if (Time.timeScale > 0 && !_piece.activeSelf)
         {   
 
             int turn = GameManager.Instance.CurrentTurn;
