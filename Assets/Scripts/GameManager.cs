@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
         _whiteScore = whiteScore;
         _blackScore = blackScore;
 
+        InGameUIControl.Instance.UpdateScoreUI(whiteScore, blackScore);
+
         if (whiteScore == 0) { 
             
         } else if (blackScore == 0)
