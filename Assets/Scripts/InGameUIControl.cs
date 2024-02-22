@@ -14,6 +14,8 @@ public class InGameUIControl : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _blackScoreText;
     [SerializeField] private TextMeshProUGUI _totalTurnsText;
     [SerializeField] private TextMeshProUGUI _outcomeText;
+    [SerializeField] private Image _whiteStoneImage;
+    [SerializeField] private Image _blackStoneImage;
     [SerializeField] private Image _winnerDisplay;
     [SerializeField] private Button _gameOverButton;
     private static InGameUIControl _instance;
@@ -66,10 +68,21 @@ public class InGameUIControl : MonoBehaviour
         _gameOverScreen.SetActive(true);
     }
 
-    public void UpdateScoreUI(int whiteScore, int blackScore)
+    public void UpdateTurnInfoUI(int turn, int whiteScore, int blackScore)
     {
         _whiteScoreText.text = whiteScore.ToString();
         _blackScoreText.text = blackScore.ToString();
+
+        if (turn == 0)
+        {
+            _whiteStoneImage.sprite = Resources.Load<Sprite>("Sprites/WhiteStoneGlow");
+            _blackStoneImage.sprite = Resources.Load<Sprite>("Sprites/BlackStone");
+        }
+        else
+        {
+            _blackStoneImage.sprite = Resources.Load<Sprite>("Sprites/BlackStoneGlow");
+            _whiteStoneImage.sprite = Resources.Load<Sprite>("Sprites/WhiteStone");
+        }
     }
 
     public void GameOver(int winner, int totalTurn)

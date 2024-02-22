@@ -783,6 +783,8 @@ MonoBehaviour:
   _blackScoreText: {fileID: 1405582149}
   _totalTurnsText: {fileID: 1428354802}
   _outcomeText: {fileID: 1597747050}
+  _whiteStoneImage: {fileID: 493498774}
+  _blackStoneImage: {fileID: 314305782}
   _winnerDisplay: {fileID: 608389182}
   _gameOverButton: {fileID: 1609341122}
 --- !u!114 &434354630

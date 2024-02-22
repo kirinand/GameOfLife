@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        InGameUIControl.Instance.UpdateScoreUI(INITAIL_SCORE, INITAIL_SCORE);
+        InGameUIControl.Instance.UpdateTurnInfoUI(_currentTurn, INITAIL_SCORE, INITAIL_SCORE);
     }
 
     public int CurrentTurn
@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
         _whiteScore = whiteScore;
         _blackScore = blackScore;
 
-        InGameUIControl.Instance.UpdateScoreUI(whiteScore, blackScore);
+        InGameUIControl.Instance.UpdateTurnInfoUI(_currentTurn, whiteScore, blackScore);
 
         if (whiteScore == 0) 
         {
