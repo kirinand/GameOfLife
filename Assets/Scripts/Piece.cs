@@ -20,13 +20,9 @@ public class Piece : MonoBehaviour
         }
         set {
             if (value == PieceColor.White)
-            {
                 GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/WhiteStone");
-            }
             else
-            {
                 GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/BlackStone");
-            }
 
             _color = value;
         }

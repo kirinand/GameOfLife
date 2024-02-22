@@ -53,11 +53,16 @@ public class GameManager : MonoBehaviour
 
         InGameUIControl.Instance.UpdateScoreUI(whiteScore, blackScore);
 
-        if (whiteScore == 0) { 
-            
-        } else if (blackScore == 0)
+        if (whiteScore == 0) 
         {
-            
+            InGameUIControl.Instance.GameOver(1, _totalTurns);
+        }
+        else if (blackScore == 0)
+        {
+            if (whiteScore == 0)
+                InGameUIControl.Instance.GameOver(0, _totalTurns);
+            else
+                InGameUIControl.Instance.GameOver(2, _totalTurns);
         }
     }
 }
