@@ -109,5 +109,7 @@ public class InGameUIControl : MonoBehaviour
 
         Time.timeScale = 0;
         _gameOverButton.gameObject.SetActive(true);
+        _whiteStoneImage.sprite = Resources.Load<Sprite>("Sprites/WhiteStone");
+        _blackStoneImage.sprite = Resources.Load<Sprite>("Sprites/BlackStone");
     }
 }
