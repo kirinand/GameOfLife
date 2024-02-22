@@ -14,8 +14,9 @@ public class Tile : MonoBehaviour
     private void OnMouseEnter()
     {   
         if (!_piece.activeSelf)
-        {
-            _highlight.SetActive(true);
+        {   
+            if (Time.timeScale > 0)
+                _highlight.SetActive(true);
         }
     }
 

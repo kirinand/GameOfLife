@@ -25,6 +25,11 @@ public class GameManager : MonoBehaviour
         _instance = this;
     }
 
+    private void Start()
+    {
+        InGameUIControl.Instance.UpdateScoreUI(INITAIL_SCORE, INITAIL_SCORE);
+    }
+
     public int CurrentTurn
     {
         get => _currentTurn;
@@ -60,9 +65,9 @@ public class GameManager : MonoBehaviour
         else if (blackScore == 0)
         {
             if (whiteScore == 0)
-                InGameUIControl.Instance.GameOver(0, _totalTurns);
-            else
                 InGameUIControl.Instance.GameOver(2, _totalTurns);
+            else
+                InGameUIControl.Instance.GameOver(0, _totalTurns);
         }
     }
 }

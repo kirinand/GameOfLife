@@ -15,6 +15,7 @@ public class InGameUIControl : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _totalTurnsText;
     [SerializeField] private TextMeshProUGUI _outcomeText;
     [SerializeField] private Image _winnerDisplay;
+    [SerializeField] private Button _gameOverButton;
     private static InGameUIControl _instance;
 
     public static InGameUIControl Instance
@@ -55,6 +56,16 @@ public class InGameUIControl : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void CloseGameOver()
+    {
+        _gameOverScreen.SetActive(false);
+    }
+
+    public void OpenGameOver()
+    {
+        _gameOverScreen.SetActive(true);
+    }
+
     public void UpdateScoreUI(int whiteScore, int blackScore)
     {
         _whiteScoreText.text = whiteScore.ToString();
@@ -84,5 +95,6 @@ public class InGameUIControl : MonoBehaviour
         }
 
         Time.timeScale = 0;
+        _gameOverButton.gameObject.SetActive(true);
     }
 }
