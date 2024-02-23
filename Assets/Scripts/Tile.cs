@@ -33,7 +33,7 @@ public class Tile : MonoBehaviour
             int turn = GameManager.Instance.CurrentTurn;
             ActivatePiece(turn);
             _highlight.SetActive(false);
-            GridManager.Instance.MakeMove(X, Y, turn);
+            PlayAgent.Instance.MakeMove(X, Y, turn);
         }
     }
 
