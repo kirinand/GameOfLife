@@ -28,7 +28,7 @@ public class GridManager : MonoBehaviour
     }
 
 
-    public void GenerateBoard(int[,] boardState)
+    public void GenerateBoard(sbyte[,] boardState)
     {   
         int size = boardState.GetLength(0);
         _camera.position = new Vector3((float)size / 2 - 0.5f, (float)size / 2 - 0.5f, -10);
@@ -49,10 +49,9 @@ public class GridManager : MonoBehaviour
         frame.name = "Frame";
     }
 
-    public void AdvanceBoardState(int[,] prevState, int[,] nextState)
+    public void UpdateBoard(sbyte[,] prevState, sbyte[,] nextState, int[] score)
     {
         int size = prevState.GetLength(0);
-        int[] totalCount = { 0, 0 };
 
         for (int i = 0; i < size; i++)
         {
@@ -60,14 +59,11 @@ public class GridManager : MonoBehaviour
             {   
                 int piece = nextState[i, j];
 
-                if (piece != -1)
-                    totalCount[piece] += 1;
-
                 if (piece != prevState[i, j])
                     _tiles[i, j].ChangeState(piece);
             }
         }
 
-        GameManager.Instance.AdvanceTurn(totalCount[0], totalCount[1]);
+        GameManager.Instance.AdvanceTurn(score[0], score[1]);
     }
 }

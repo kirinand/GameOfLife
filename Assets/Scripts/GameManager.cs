@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     private int _totalTurns = 0;
     private int _whiteScore = INITAIL_SCORE;
     private int _blackScore = INITAIL_SCORE;
+    private int _ai; // 0 for white, 1 for black, -1 if no AI
 
     public static GameManager Instance {
         get { 
@@ -21,13 +22,16 @@ public class GameManager : MonoBehaviour
     }
 
     private void Awake()
-    {
+    {   
         _instance = this;
     }
 
     private void Start()
     {
+        Time.timeScale = 1;
         InGameUIControl.Instance.UpdateTurnInfoUI(_currentTurn, INITAIL_SCORE, INITAIL_SCORE);
+        _ai = 1;
+        if (_ai == _currentTurn) PlayAI();
     }
 
     public int CurrentTurn
@@ -69,5 +73,14 @@ public class GameManager : MonoBehaviour
             else
                 InGameUIControl.Instance.GameOver(0, _totalTurns);
         }
+
+        if (_ai == _currentTurn) PlayAI();
+    }
+
+    private void PlayAI()
+    {
+        Time.timeScale = 0;
+        PlayAgent.Instance.MakeAIMove(_ai);
+        Time.timeScale = 1;
     }
 }
