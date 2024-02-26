@@ -155,9 +155,10 @@ class MCTS
     public const int NumSimPerNode = 3;
     public const int MaxSimDepth = 10;
     public const int MaxSimPerMove = 500;
-    public const float winScore = 1;
-    public const float loseScore = 0;
-    public const float drawScore = 0.5f;
+    public const float WinScore = 1;
+    public const float LoseScore = 0;
+    public const float DrawScore = 0.5f;
+    public const int TimeOut = 10000;
     private readonly System.Random Random = new();
     private sbyte[,] _rootState;
     private Node _root;
@@ -201,7 +202,7 @@ class MCTS
             Simulate(node);
             Backpropagate(node);
 
-            if (Environment.TickCount - startTime > 10000)
+            if (Environment.TickCount - startTime > TimeOut)
             {
                 Debug.Log("Search timeout exceeded");
                 return GetNextMove();
@@ -268,20 +269,20 @@ class MCTS
                     if (score[1 - _agentTurn] == 0)
                     {
                         childNode.Terminal = 2;
-                        childNode.W = drawScore;
+                        childNode.W = DrawScore;
                     }
 
                     else
                     {
                         childNode.Terminal = 1;
-                        childNode.W = loseScore;
+                        childNode.W = LoseScore;
                     }
 
                 }
                 else if (score[1 - _agentTurn] == 0)
                 {
                     childNode.Terminal = 0;
-                    childNode.W = winScore;
+                    childNode.W = WinScore;
                 }
 
                 childStates[code] = (childNode, new List<(sbyte, sbyte)> { ((sbyte)x, (sbyte)y) });
@@ -339,20 +340,20 @@ class MCTS
                 {
                     if (score[1 - _agentTurn] == 0)
                     {
-                        evaluations.Add(drawScore);
+                        evaluations.Add(DrawScore);
                         eval = null;
                         break;
                     }
                     else
                     {
-                        evaluations.Add(loseScore);
+                        evaluations.Add(LoseScore);
                         eval = null;
                         break;
                     }
                 }
                 else if (score[1 - _agentTurn] == 0)
                 {
-                    evaluations.Add(winScore);
+                    evaluations.Add(WinScore);
                     eval = null;
                     break;
                 }
@@ -364,7 +365,7 @@ class MCTS
             }
 
             if (eval != null)
-                evaluations.Add(drawScore * eval[_agentTurn] / (eval[_agentTurn] + eval[1 - _agentTurn]) + winScore / 4f);
+                evaluations.Add(DrawScore * eval[_agentTurn] / (eval[_agentTurn] + eval[1 - _agentTurn]) + WinScore / 4f);
         }
 
 
