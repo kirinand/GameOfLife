@@ -5,9 +5,22 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void PlayGame(int mode) // 0 for single player, 1 for sandbox
-    {
+    [SerializeField] private GameObject _sideSelectionMenu;
+
+    public void PlayGame(int ai) // 0 for white, 1 for black, -1 if no AI
+    {   
+        PlayerPrefs.SetInt("AI", ai);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void OpenSideSelectionMenu()
+    {
+        _sideSelectionMenu.SetActive(true);
+    }
+
+    public void CloseSideSelectionMenu() 
+    {
+        _sideSelectionMenu.SetActive(false);
     }
 
     public void QuitGame()

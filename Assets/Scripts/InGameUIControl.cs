@@ -55,7 +55,9 @@ public class InGameUIControl : MonoBehaviour
     public void CloseMenu()
     {
         _pauseMenu.SetActive(false);
-        Time.timeScale = 1;
+
+        if (!GameManager.Instance.IsGameOver)
+            Time.timeScale = 1;
     }
 
     public void CloseGameOver()

@@ -14,11 +14,8 @@ public class Tile : MonoBehaviour
 
     private void OnMouseEnter()
     {   
-        if (!_piece.activeSelf)
-        {   
-            if (Time.timeScale > 0)
-                _highlight.SetActive(true);
-        }
+        if (!_piece.activeSelf && Time.timeScale > 0)
+            _highlight.SetActive(true);
     }
 
     private void OnMouseExit()
@@ -29,7 +26,7 @@ public class Tile : MonoBehaviour
 
     private async void OnMouseDown()
     { 
-        if (Time.timeScale > 0 && !_piece.activeSelf)
+        if (!_piece.activeSelf && Time.timeScale > 0)
         {   
 
             int turn = GameManager.Instance.CurrentTurn;
