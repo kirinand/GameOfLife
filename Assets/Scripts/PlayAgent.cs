@@ -55,9 +55,10 @@ public class PlayAgent : MonoBehaviour
     public void MakeMove(int x, int y, int turn)
     {
         _boardState[x, y] = (sbyte)turn;
-        (sbyte[,] nextState, int[] score) = CalculateNextState(_boardState, turn);
-        GridManager.Instance.UpdateBoard(_boardState, nextState, score);
+        sbyte[,] currState = _boardState.Clone() as sbyte[,];
+        (sbyte[,] nextState, int[] score) = CalculateNextState(currState, turn);
         _boardState = nextState;
+        GridManager.Instance.UpdateBoard(currState, nextState, score);
     }
 
     public static (sbyte[,] nextState, int[] score) CalculateNextState(sbyte[,] currState, int turn) 
@@ -114,8 +115,9 @@ public class PlayAgent : MonoBehaviour
 
     public void MakeAIMove(int turn)
     {   
-        (int x, int y) move = SearchNextMove(turn);
-        MakeMove(move.x, move.y, turn);
+        (int x, int y)  = SearchNextMove(turn);
+        GridManager.Instance.UpdateTile(x, y, turn);
+        MakeMove(x, y, turn);
     }
 
     (int, int) SearchNextMove(int turn) 
@@ -138,8 +140,8 @@ class MCTS
 {
     public const float Explore = 1.41f;
     public const int NumSimPerNode = 3;
-    public const int MaxSimDepth = 20;
-    public const int MaxSimPerMove = 1000;
+    public const int MaxSimDepth = 10;
+    public const int MaxSimPerMove = 500;
     public const float winScore = 1;
     public const float loseScore = 0;
     public const float drawScore = 0.5f;

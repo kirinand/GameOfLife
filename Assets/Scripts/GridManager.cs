@@ -49,9 +49,9 @@ public class GridManager : MonoBehaviour
         frame.name = "Frame";
     }
 
-    public void UpdateBoard(sbyte[,] prevState, sbyte[,] nextState, int[] score)
+    public void UpdateBoard(sbyte[,] currState, sbyte[,] nextState, int[] score)
     {
-        int size = prevState.GetLength(0);
+        int size = currState.GetLength(0);
 
         for (int i = 0; i < size; i++)
         {
@@ -59,11 +59,16 @@ public class GridManager : MonoBehaviour
             {   
                 int piece = nextState[i, j];
 
-                if (piece != prevState[i, j])
+                if (piece != currState[i, j])
                     _tiles[i, j].ChangeState(piece);
             }
         }
 
         GameManager.Instance.AdvanceTurn(score[0], score[1]);
+    }
+
+    public void UpdateTile(int x, int y, int piece)
+    {
+        _tiles[x, y].ChangeState(piece);
     }
 }

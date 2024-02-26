@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Time.timeScale = 1;
         InGameUIControl.Instance.UpdateTurnInfoUI(_currentTurn, INITAIL_SCORE, INITAIL_SCORE);
         _ai = 1;
         if (_ai == _currentTurn) PlayAI();
@@ -79,8 +78,6 @@ public class GameManager : MonoBehaviour
 
     private void PlayAI()
     {
-        Time.timeScale = 0;
         PlayAgent.Instance.MakeAIMove(_ai);
-        Time.timeScale = 1;
     }
 }
