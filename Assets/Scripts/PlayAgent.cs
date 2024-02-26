@@ -3,12 +3,15 @@ using System.Numerics;
 using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
+using System;
 
 public class PlayAgent : MonoBehaviour
 {
     public const int SIZE = 8;
     private sbyte[,] _boardState;
     private static PlayAgent _instance;
+    private CancellationTokenSource _cts;
 
     public static PlayAgent Instance
     {
@@ -24,12 +27,18 @@ public class PlayAgent : MonoBehaviour
     private void Awake()
     {
         _instance = this;
+        _cts = new CancellationTokenSource();
         InitializeBoardState();
     }
 
     private void Start()
     {
         GridManager.Instance.GenerateBoard(_boardState);
+    }
+
+    public void OnDestroy()
+    {
+        _cts.Cancel();
     }
 
     void InitializeBoardState()
@@ -116,19 +125,19 @@ public class PlayAgent : MonoBehaviour
 
     public async void MakeAIMove(int turn)
     {   
-        (int x, int y)  = await SearchNextMove(turn);
-        await GridManager.Instance.UpdateTile(x, y, turn);
+        (int x, int y)  = await SearchNextMove(turn, _cts.Token);
+        await GridManager.Instance.UpdateTile(x, y, turn, _cts.Token);
         MakeMove(x, y, turn);
     }
 
-    async Task<(int x, int y)> SearchNextMove(int turn) 
+    async Task<(int x, int y)> SearchNextMove(int turn, CancellationToken ct) 
     {   
         return await Task.Run(() =>
         {
             MCTS mcts = new MCTS(_boardState, turn);
-            (int, int) move = mcts.Search();
+            (int, int) move = mcts.Search(ct);
             return move;
-        });
+        },  ct);
     }
 }
 
@@ -165,10 +174,15 @@ class MCTS
     }
 
 
-    public (int x, int y) Search() {
+    public (int x, int y) Search(CancellationToken ct) {
+        int startTime = Environment.TickCount;
+
         while (true) 
-        {
+        {   
+            ct.ThrowIfCancellationRequested();
+
             (Node node, bool isNextMoveFound) = Select();
+
             if (isNextMoveFound) 
             { 
                 int idx = Random.Next(0, node.Moves.Length);
@@ -176,14 +190,22 @@ class MCTS
                 return node.Moves[idx];
             }
             (node, isNextMoveFound) = Expand(node);
+
             if (isNextMoveFound)
             {
                 int idx = Random.Next(0, node.Moves.Length);
                 Debug.Log(node.Moves[idx]);
                 return node.Moves[idx];
             }
+
             Simulate(node);
             Backpropagate(node);
+
+            if (Environment.TickCount - startTime > 10000)
+            {
+                Debug.Log("Search timeout exceeded");
+                return GetNextMove();
+            }
         }
     }
 
@@ -391,6 +413,13 @@ class MCTS
         return maxNodes;
     }
 
+    (int, int) GetNextMove() 
+    {
+        float maxW = _root.Children.Max(n => n.W);
+        List<Node> maxWNodes = _root.Children.Where(n => n.W == maxW).ToList();
+        Node node = maxWNodes[Random.Next(0, maxWNodes.Count)];
+        return node.Moves[Random.Next(0, node.Moves.Length)];
+    }
 
     BigInteger EncodeState(sbyte[,] state)
     {

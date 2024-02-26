@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Threading;
 
 public class GridManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Frame _framePrefab;
     [SerializeField] private Transform _camera;
     private Tile[,] _tiles;
+    private CancellationTokenSource _cts;
 
     public static GridManager Instance
     {
@@ -26,6 +28,12 @@ public class GridManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
+        _cts = new CancellationTokenSource();
+    }
+
+    private void OnDestroy()
+    {
+        _cts.Cancel();
     }
 
 
@@ -61,15 +69,15 @@ public class GridManager : MonoBehaviour
                 int piece = nextState[i, j];
 
                 if (piece != currState[i, j])
-                    await _tiles[i, j].ChangeState(piece);
+                    await _tiles[i, j].ChangeState(_cts.Token, piece);
             }
         }
 
         GameManager.Instance.AdvanceTurn(score[0], score[1]);
     }
 
-    public async Task UpdateTile(int x, int y, int piece)
+    public async Task UpdateTile(int x, int y, int piece, CancellationToken ct)
     {
-        await _tiles[x, y].ChangeState(piece, true);
+        await _tiles[x, y].ChangeState(_cts.Token, piece, true);
     }
 }
