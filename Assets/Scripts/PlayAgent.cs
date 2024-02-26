@@ -182,36 +182,38 @@ class MCTS
         {   
             ct.ThrowIfCancellationRequested();
 
-            (Node node, bool isNextMoveFound) = Select();
+            (Node nodeToExpand, bool isSearchEnd) = Select();
 
-            if (isNextMoveFound) 
+            if (isSearchEnd) 
             { 
-                int idx = Random.Next(0, node.Moves.Length);
-                Debug.Log(node.Moves[idx]);
-                return node.Moves[idx];
+                (int, int) move = GetNextMove();
+                Debug.Log(move);
+                return move;
             }
-            (node, isNextMoveFound) = Expand(node);
+            (Node nodeToRoll, bool isWinningMoveFound) = Expand(nodeToExpand);
 
-            if (isNextMoveFound)
+            if (isWinningMoveFound)
             {
-                int idx = Random.Next(0, node.Moves.Length);
-                Debug.Log(node.Moves[idx]);
-                return node.Moves[idx];
+                int idx = Random.Next(0, nodeToRoll.Moves.Length);
+                Debug.Log(nodeToRoll.Moves[idx]);
+                return nodeToRoll.Moves[idx];
             }
 
-            Simulate(node);
-            Backpropagate(node);
+            Simulate(nodeToRoll);
+            Backpropagate(nodeToRoll);
 
             if (Environment.TickCount - startTime > TimeOut)
             {
                 Debug.Log("Search timeout exceeded");
-                return GetNextMove();
+                (int, int) move = GetNextMove();
+                Debug.Log(move);
+                return move;
             }
         }
     }
 
 
-    (Node node, bool isNextMoveFound) Select()
+    (Node node, bool isSearchEnd) Select()
     {
         Node node = _root;
 
@@ -241,7 +243,7 @@ class MCTS
         return (node, false);
     }
 
-    (Node node, bool isNextMoveFound) Expand(Node node)
+    (Node node, bool isWinningMoveFound) Expand(Node node)
     {   
         if (node.Terminal > -1) return (node, false);
 
