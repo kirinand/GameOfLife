@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class PlayAgent : MonoBehaviour
 {
@@ -113,18 +114,21 @@ public class PlayAgent : MonoBehaviour
         return count;
     }
 
-    public void MakeAIMove(int turn)
+    public async void MakeAIMove(int turn)
     {   
-        (int x, int y)  = SearchNextMove(turn);
-        GridManager.Instance.UpdateTile(x, y, turn);
+        (int x, int y)  = await SearchNextMove(turn);
+        await GridManager.Instance.UpdateTile(x, y, turn);
         MakeMove(x, y, turn);
     }
 
-    (int, int) SearchNextMove(int turn) 
+    async Task<(int x, int y)> SearchNextMove(int turn) 
     {   
-        MCTS mcts = new MCTS(_boardState, turn);
-        (int, int) move = mcts.Search();
-        return move;
+        return await Task.Run(() =>
+        {
+            MCTS mcts = new MCTS(_boardState, turn);
+            (int, int) move = mcts.Search();
+            return move;
+        });
     }
 }
 
@@ -145,6 +149,7 @@ class MCTS
     public const float winScore = 1;
     public const float loseScore = 0;
     public const float drawScore = 0.5f;
+    private readonly System.Random Random = new();
     private sbyte[,] _rootState;
     private Node _root;
     private sbyte _agentTurn; // 0 for white, 1 for black
@@ -166,14 +171,14 @@ class MCTS
             (Node node, bool isNextMoveFound) = Select();
             if (isNextMoveFound) 
             { 
-                int idx = Random.Range(0, node.Moves.Length);
+                int idx = Random.Next(0, node.Moves.Length);
                 Debug.Log(node.Moves[idx]);
                 return node.Moves[idx];
             }
             (node, isNextMoveFound) = Expand(node);
             if (isNextMoveFound)
             {
-                int idx = Random.Range(0, node.Moves.Length);
+                int idx = Random.Next(0, node.Moves.Length);
                 Debug.Log(node.Moves[idx]);
                 return node.Moves[idx];
             }
@@ -195,18 +200,18 @@ class MCTS
             if (maxNodesWithinLimit.Count == 0)
             {   
                 Debug.Log("Search limit reached");
-                return (maxNodes[Random.Range(0, maxNodes.Count)], true);
+                return (maxNodes[Random.Next(0, maxNodes.Count)], true);
             }
             else
             {
                 maxNodes = maxNodesWithinLimit;
-                node = maxNodes[Random.Range(0, maxNodes.Count)];
+                node = maxNodes[Random.Next(0, maxNodes.Count)];
             }
 
             while (node.Children != null)
             {
                 maxNodes = GetNodesToSearch(node);
-                node = maxNodes[Random.Range(0, maxNodes.Count)];
+                node = maxNodes[Random.Next(0, maxNodes.Count)];
             }
         }
 
@@ -275,12 +280,12 @@ class MCTS
             if (winningNodes.Count > 0)
             {
                 Debug.Log("Found winning move");
-                return (winningNodes[Random.Range(0, winningNodes.Count)], true);
+                return (winningNodes[Random.Next(0, winningNodes.Count)], true);
             }
         }
 
         node.Children = children.ToArray();
-        return (node.Children[Random.Range(0, node.Children.Length)], false);
+        return (node.Children[Random.Next(0, node.Children.Length)], false);
     }
 
     void Simulate(Node node)
@@ -303,7 +308,7 @@ class MCTS
             while (depth < MaxSimDepth)
             {
                 List<(int, int, int)> moves = GetPotentialMoves(state);
-                (int x, int y, _) = moves[Random.Range(0, moves.Count)];
+                (int x, int y, _) = moves[Random.Next(0, moves.Count)];
                 sbyte turn = (sbyte)(isAgentTurn ? _agentTurn : 1 - _agentTurn);
                 state[x, y] = turn;
                 (sbyte[,] nextState, int[] score) = PlayAgent.CalculateNextState(state, turn);
@@ -425,7 +430,7 @@ class MCTS
         }
 
         if (passMoves.Count > 0)
-            potentialMoves.Add(passMoves[Random.Range(0, passMoves.Count)]);
+            potentialMoves.Add(passMoves[Random.Next(0, passMoves.Count)]);
 
         return potentialMoves;
     }

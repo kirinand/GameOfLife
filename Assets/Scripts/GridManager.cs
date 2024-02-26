@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class GridManager : MonoBehaviour
 {
@@ -49,7 +50,7 @@ public class GridManager : MonoBehaviour
         frame.name = "Frame";
     }
 
-    public void UpdateBoard(sbyte[,] currState, sbyte[,] nextState, int[] score)
+    public async void UpdateBoard(sbyte[,] currState, sbyte[,] nextState, int[] score)
     {
         int size = currState.GetLength(0);
 
@@ -60,15 +61,15 @@ public class GridManager : MonoBehaviour
                 int piece = nextState[i, j];
 
                 if (piece != currState[i, j])
-                    _tiles[i, j].ChangeState(piece);
+                    await _tiles[i, j].ChangeState(piece);
             }
         }
 
         GameManager.Instance.AdvanceTurn(score[0], score[1]);
     }
 
-    public void UpdateTile(int x, int y, int piece)
+    public async Task UpdateTile(int x, int y, int piece)
     {
-        _tiles[x, y].ChangeState(piece);
+        await _tiles[x, y].ChangeState(piece, true);
     }
 }

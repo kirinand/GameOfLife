@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
         }
 
         if (_ai == _currentTurn) PlayAI();
+        else Time.timeScale = 1;
     }
 
     private void PlayAI()

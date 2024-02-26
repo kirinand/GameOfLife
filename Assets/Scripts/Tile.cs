@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -22,17 +23,19 @@ public class Tile : MonoBehaviour
 
     private void OnMouseExit()
     {
-        _highlight.SetActive(false);
+        if (Time.timeScale > 0)
+            _highlight.SetActive(false);
     }
 
-    private void OnMouseDown()
+    private async void OnMouseDown()
     { 
         if (Time.timeScale > 0 && !_piece.activeSelf)
         {   
 
             int turn = GameManager.Instance.CurrentTurn;
-            ActivatePiece(turn);
-            _highlight.SetActive(false);
+            // prevent player input to the board
+            Time.timeScale = 0;
+            await ChangeState(turn, true);
             PlayAgent.Instance.MakeMove(X, Y, turn);
         }
     }
@@ -51,10 +54,21 @@ public class Tile : MonoBehaviour
         if (state != -1) ActivatePiece(state);
     }
 
-    public void ChangeState(int state) {
+    public async Task ChangeState(int state, bool isMove=false) {
         if (state == -1)
+        {
             _piece.SetActive(false);
+        }
         else 
+        { 
             ActivatePiece(state);
+
+            if (isMove) 
+            {   
+                _highlight.SetActive(true);
+                await Task.Delay(500);
+                _highlight.SetActive(false);
+            }
+        } 
     }
 }
