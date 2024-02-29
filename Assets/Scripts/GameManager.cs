@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
         {
             InGameUIControl.Instance.GameOver(1, _totalTurns);
             IsGameOver = true;
+            return;
         }
         else if (blackScore == 0)
         {
@@ -80,10 +81,11 @@ public class GameManager : MonoBehaviour
                 InGameUIControl.Instance.GameOver(0, _totalTurns);
 
             IsGameOver = true;
+            return;
         }
 
         if (_ai == _currentTurn) PlayAI();
-        else if (!IsGameOver) Time.timeScale = 1;
+        else Time.timeScale = 1;
     }
 
     private void PlayAI()

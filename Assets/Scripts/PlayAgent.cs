@@ -190,6 +190,7 @@ class MCTS
                 Debug.Log(move);
                 return move;
             }
+
             (Node nodeToRoll, bool isWinningMoveFound) = Expand(nodeToExpand);
 
             if (isWinningMoveFound)
